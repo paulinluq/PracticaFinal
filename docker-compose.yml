@@ -1,0 +1,42 @@
+
+version: '3.8'  
+services:
+  
+  fastapi:
+    build: fastapi/
+    ports:
+      - 8000:8000
+    networks:
+      - deploy_network
+    container_name: fastapi
+    volumes:
+      - mis_datos:/var/lib/docker/volumes/aa-streamlit-fastapi_mis_datos/_data
+      
+  flask:  
+    build: ./flask  
+    ports:
+      - "5000:5000"  
+    networks:
+      - deploy_network
+    container_name: flask
+    volumes:
+      - .:/app  
+
+  streamlit:
+    build: ./streamlit  
+    depends_on:
+      - flask
+    ports:
+      - "8501:8501"
+    networks:
+      - deploy_network
+    container_name: streamlit
+    volumes:
+      - .:/app  
+
+networks:
+  deploy_network:
+    driver: bridge
+
+volumes:
+  mis_datos:  
